@@ -20,7 +20,7 @@ const Profile = () => {
         console.log('Username:', userName);
 
         // Fetch the user data from the server
-        fetch(`http://localhost:8080/auth/login`, {
+        fetch(`https://myartgallery.onrender.com/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
