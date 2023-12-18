@@ -25,6 +25,12 @@ const Signup = () => {
         console.log('Values to be sent to the backend:', userRequest);
 
         try {
+            // Offline Mode
+            // const response = await axios.post('http://localhost:8080/auth/signup', {
+
+            // Online Mode
+            // const response = await axios.post('https://myartgallery.onrender.com/auth/signup', {
+
             const response = await axios.post('https://myartgallery.onrender.com/auth/signup', userRequest);
         
             // Handle success response

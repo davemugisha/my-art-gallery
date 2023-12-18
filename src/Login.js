@@ -12,6 +12,13 @@ const Login = () => {
         e.preventDefault();
 
         try {
+
+            // Offline Mode
+            // const response = await axios.post('http://localhost:8080/auth/login', {
+
+            // Online Mode
+            // const response = await axios.post('https://myartgallery.onrender.com/auth/login', {
+
             const response = await axios.post('https://myartgallery.onrender.com/auth/login', {
                 userName: username,
                 password: password,
