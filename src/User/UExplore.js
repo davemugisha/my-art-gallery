@@ -15,6 +15,7 @@ import Art11 from '../Images/pexels-jnm-thapa-6851831.jpg';
 import Art12 from '../Images/pexels-ike-louie-natividad-6121165.jpg';
 
 const UExplore = () => {
+
     return (
         <>
             <div className="main">

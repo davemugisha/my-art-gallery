@@ -10,34 +10,11 @@ import Art3 from '../Images/pexels-eliška-krejčová-14539605.jpg';
 import Art4 from '../Images/pexels-jnm-thapa-6851831.jpg';
 
 const Profile = () => {
-    const [fullName, setFullName] = useState('');
-    const [userName, setUserName] = useState('');
-    const [email, setEmail] = useState('');
 
-    useEffect(() => {
-        // Get the username from the session storage
-        const userName = sessionStorage.getItem('userName');
-        console.log('Username:', userName);
-
-        // Fetch the user data from the server
-        fetch(`https://myartgallery.onrender.com/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                // Your login request payload here
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('User Data:', data);
-            setFullName(data.fullName);
-            setUserName(data.userName);
-            setEmail(data.email);
-        })
-        .catch(error => console.error('Error:', error));
-    }, []);
+    const userId = sessionStorage.getItem('userId');
+    const username = sessionStorage.getItem('username');
+    const email = sessionStorage.getItem('email');
+    const name = sessionStorage.getItem('name');
 
     return (
         <>
@@ -45,7 +22,7 @@ const Profile = () => {
                 <ul className='UserMenu2'>
                     <li style={{ float: 'left', }}><img src={Logo} width="50px" /></li>
                     <li style={{ float: 'left', }}><a>My Art Gallery</a></li>
-                    <li><Link to="/User/Logout">Logout</Link></li>
+                    <li><Link to="/Login">Logout</Link></li>
                     <li><Link to="/User/Profile">Profile</Link></li>
                     <li><Link to="/User/Upload">Upload</Link></li>
                     <li><Link to="/User/UTrending">Trending</Link></li>
@@ -58,10 +35,10 @@ const Profile = () => {
                         <div className="pp">
                             <img src={pp} />
                         </div>
-                        <h1 style={{ textAlign: 'center', }}>{fullName}Full Name Here</h1>
-                        <h3 style={{ textAlign: 'center', }}>{userName}User Name Here</h3>    
-                        <p style={{ textAlign: 'center', padding: 15, }}>{email}Email Here</p>  
-                        <p style={{ textAlign: 'center', paddingBottom: 15, }}>Page Link Goes Here Page Link Goes Here</p>
+                        <h1 style={{ textAlign: 'center', }}>{name}</h1>
+                        <h3 style={{ textAlign: 'center', }}>@{username}</h3>    
+                        <p style={{ textAlign: 'center', padding: 15, }}>{email}</p>  
+                        <p style={{ textAlign: 'center', paddingBottom: 15, }}>{userId} Page Link Goes Here Page Link Goes Here</p>
                         <div style={{ margin: 'auto', width: '30%', }}>
                             <Link to=""><button className="edit">Edit Profile</button></Link>   
                         </div>

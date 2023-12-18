@@ -27,8 +27,11 @@ const Login = () => {
             if (response.status === 200) {
                 alert('Login successful!');
                 history.push('/User/Profile');
-                // Save the username for sessions
-                sessionStorage.setItem('username', username);
+                // Save the user info for sessions
+                sessionStorage.setItem('userId', response.data.userId);
+                sessionStorage.setItem('username', response.data.userName);
+                sessionStorage.setItem('email', response.data.email);
+                sessionStorage.setItem('name', response.data.firstName + ' ' + response.data.lastName);
             } else {
                 alert('Login failed. Please check your username and password.');
             }

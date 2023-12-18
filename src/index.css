@@ -248,6 +248,7 @@ hr {
   width: 50%;
   height: 100%;
   background-color: #e4e4e4;
+  overflow: hidden;
 }
 
 .description{
@@ -294,11 +295,26 @@ hr {
   border-radius: 15px;
   margin-top: 37%;
   height: 200px;
+  overflow: hidden;
 }
 
 .upload-area:hover{
   opacity: 0.5;
   transition: 1 ease;
+}
+
+.uploaded {
+  height:100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  max-zoom: 100%;
+  background-size: contain;
+}
+
+.uploaded img {
+  margin: auto;
 }
 
 .keyword-box{
