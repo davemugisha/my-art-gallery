@@ -32,6 +32,7 @@ const Login = () => {
                 sessionStorage.setItem('username', response.data.userName);
                 sessionStorage.setItem('email', response.data.email);
                 sessionStorage.setItem('name', response.data.firstName + ' ' + response.data.lastName);
+                sessionStorage.setItem('images', response.data.images);
             } else {
                 alert('Login failed. Please check your username and password.');
             }

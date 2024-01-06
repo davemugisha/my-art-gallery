@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Style.css';
 import Logo from '../Images/logo.png';
@@ -10,11 +11,35 @@ import Art3 from '../Images/pexels-eliška-krejčová-14539605.jpg';
 import Art4 from '../Images/pexels-jnm-thapa-6851831.jpg';
 
 const Profile = () => {
+    const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    // Fetch images from the server for the logged-in user
+    const fetchImages = async () => {
+        try {
+            const userId = sessionStorage.getItem('userId');
+    
+            // Check if userId is defined
+            if (!userId) {
+                console.error('User ID is not defined.');
+                return;
+            }
+    
+            const response = await axios.get(`https://myartgallery.onrender.com/images/user/${userId}`);
+            setImages(response.data);
+        } catch (error) {
+            console.error('Error fetching images:', error.message);
+        }
+    };
+
+    fetchImages();
+  }, []);
 
     const userId = sessionStorage.getItem('userId');
     const username = sessionStorage.getItem('username');
     const email = sessionStorage.getItem('email');
     const name = sessionStorage.getItem('name');
+    const imageList = sessionStorage.getItem('images');
 
     return (
         <>
@@ -49,6 +74,17 @@ const Profile = () => {
             <h3 style={{ textAlign: 'center', padding: 10, }}>All Posts</h3>
             <hr width="80%" color="#e6e6e6" />
             <div className="images">
+
+                {/* <h1 style={{ color: 'white', textAlign: 'center',}}>Image Gallery</h1> */}
+                {images.map((image) => (
+                    <div key={image.imageId} className="image-card">
+                    <img src={image.url} alt={image.imageTitle} style={{ width: '20px', }}/>
+                    <p>Title: {image.imageTitle}</p>
+                    <p>User ID: {image.user.userId}</p>
+                    <p>Keywords: {image.keywordList.map((keyword) => keyword.keywordName).join(', ')}</p>
+                    </div>
+                ))}
+
                 <div className="column" style={{ float: 'left', }}>
                     <div className="row">
                         <img src={Art1} />
@@ -71,7 +107,7 @@ const Profile = () => {
                         <img src={Art3} />
                         <img src={Art4} />
                         <img src={Art1} />
-                    </div>
+                    </div> 
                 </div>
             </div>
         </>

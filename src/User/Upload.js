@@ -1,151 +1,117 @@
-import UNavbar from "./UNavbar";
-import { useEffect, useState } from "react";
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import UNavbar from './UNavbar';
 
 import Image from '../Images/icons8-upload-64.png';
 
-const Upload = () => {
+const Uploadimage = () => {
+  const [file, setFile] = useState(null);
+  const [title, setTitle] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
+  const [serverMessage, setServerMessage] = useState('');
 
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [title, setTitle] = useState('');
-    const [keywords, setKeywords] = useState('');
+  const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        const selectImage = document.querySelector('.upload-area');
-        const inputFile = document.querySelector('#file');
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
 
-        const handleClick = () => {
-            inputFile.click();
-        };
-
-        selectImage.addEventListener('click', handleClick);
-
-        // Cleanup function to remove the event listener when the component unmounts
-        return () => {
-            selectImage.removeEventListener('click', handleClick);
-        };
-    }, []); // Empty dependency array ensures this runs only on mount and unmount
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            setSelectedImage(reader.result);
-        };
-
-        if (file) {
-            reader.readAsDataURL(file);
-        } else {
-            setSelectedImage(null);
-        }
+    // Display image preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
     };
+    if (selectedFile) {
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setImagePreview(null);
+    }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
 
-        const checks = {
-            selectedImage,
-            title,
-            userId,
-            keywords,
-          };
-    
-        console.log('Values to be sent to the backend:', checks);
+  const handleKeywordsChange = (e) => {
+    setKeywords(e.target.value);
+  };
 
-        const formData = new FormData();
-        formData.append('file', selectedImage);
-        formData.append('title', title);
-        formData.append('user_id', userId);
-        formData.append('keywords', keywords.split(',')); // assuming keywords are comma-separated
+  const handleUploadAreaClick = () => {
+    fileInputRef.current.click();
+  };
 
-        try {
-            const response = await axios.post('https://myartgallery.onrender.com/images/upload', formData);
-            console.log('Response:', response.data);
-            // Handle response accordingly
-        } catch (error) {
-            console.error('Error:', error);
-            console.log('Error Details:', error.response.data);
-            alert('An error occurred while uploading the image.');
-        }
-        
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        // try {
-        //     const response = await axios.post('http://localhost:8080/images/upload', formData);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('title', title);
+    formData.append('user_id', userId);
+    formData.append('keywords', keywords.split(','));
 
-        //     if (response.status === 200) {
-        //         alert('Image uploaded successfully!');
-        //         // ... handle successful upload ...
-        //     } else {
-        //         alert('Failed to upload image.');
-        //     }
-        // } catch (error) {
-        //     console.error('Error:', error);
-        //     console.log('Error Details:', error.response);
-        //     alert('An error occurred while uploading the image.');
-        // }
-    };
+    try {
+      const response = await axios.post('https://myartgallery.onrender.com/images/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    const userId = sessionStorage.getItem('userId');
-    const username = sessionStorage.getItem('username');
-    const email = sessionStorage.getItem('email');
-    const name = sessionStorage.getItem('name');
+      setServerMessage(response.data.message); // Assuming the server sends a message in the response
 
-    return (
-        <>
-        <div className="mainup">
-            <UNavbar />
+      
+      setServerMessage(`Image Successfully Published!`);
+      // Handle success (e.g., show a success message to the user)
+      console.log(response.data);
+    } catch (error) {
+      setServerMessage(`Error uploading image: ${error.message}`);
+      // Handle error (e.g., show an error message to the user)
+      console.error('Error uploading image:', error.message);
+    }
+  };
 
-            <form onSubmit={handleSubmit}>
-                <div className="whitebox">
-                    <div className="upload">
-                        {selectedImage ? <img src={selectedImage} alt="Selected" className="uploaded" /> : <img src={Image} hidden />}
-                    
-                        <div className="upload-area">
-                            <img src={Image} />
-                            <h3 style={{ paddingTop: 19, }}>Upload Image</h3>
-                            <p style={{ width: '90%', margin: 'auto', padding: 15, }}>Click Here to Upload any Image of your Choice</p>
-                        </div>
-                        <input type="file" id="file" name="file" accept="image/*" required hidden onChange={handleImageChange} />
-                    </div>
-                    <div className="description">
-                        <h1 style={{ padding: 20, paddingLeft: 0, }}>Publish Your Work</h1>
-                        <label htmlFor="title" style={{display: 'block' }}>Title</label>
-                        <input type="text" placeholder="Provide a Title" required name="title" id="title" className="inputs" value={title} onChange={(e) => setTitle(e.target.value)} />
-                        <br /><br />
-                        <label htmlFor="title" style={{ display: 'block', }}>Enter Keywords</label>
-                        <input type="text" placeholder="Provide Tags related to the Image" required name="title" id="title" className="inputs" value={keywords} onChange={(e) => setKeywords(e.target.value)} />
-                        <br />
-                        <p style={{ padding: 17, paddingLeft: 0,}}>Keywords:</p>
-                        <div className="keyword-box">
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Street</div>
-                            <div className="keyword">Portrait</div>
-                            <div className="keyword">Street</div>
-                        </div>
-                        <br />
-                        <input type="submit" value="Publish" className="edits" />
+  const userId = sessionStorage.getItem('userId');
+
+  return (
+    <div className='mainup'>
+        <UNavbar />
+        <form onSubmit={handleSubmit}>
+            <div className="whitebox">
+                <div className="upload">
+                    <div>
+                        {!imagePreview ? (
+                            <div className="upload-area" onClick={handleUploadAreaClick}>
+                                <img src={Image} />
+                                <h3 style={{ paddingTop: 19 }}>Upload Image</h3>
+                                <p style={{ width: '90%', margin: 'auto', padding: 15 }}> Click Here to Upload any Image of your Choice </p>
+                            </div>
+                        ) : null}
+                        <input type="file" id="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} /> {imagePreview && (<img src={imagePreview} alt="Preview" style={{ maxWidth: '100%', }} />)}
                     </div>
                 </div>
-            </form> 
-        </div>
-        </>
-    );
-}
- 
-export default Upload;
+                <div className='description'>
+                    <h1 style={{ padding: 20, paddingLeft: 0 }}>Publish Your Work</h1>
+                    <label htmlFor="title" style={{ display: 'block' }}>Title</label>
+                    <input type="text" placeholder="Provide a Title" required name="title" id="title" className="inputs" onChange={handleTitleChange} />
+                    <br /><br />
+                    <label htmlFor="title" style={{ display: 'block' }}>Enter Keywords (comma-separated):</label>
+                    <input type="text" placeholder="Provide Tags related to the Image" required name="title" id="title" className="inputs" value={keywords} onChange={handleKeywordsChange} />
+                    <br />
+                    <p style={{ padding: 17, paddingLeft: 0 }}>Keywords:</p>
+                    <div className="keyword-box">
+                        <div className="keyword">Portrait</div>
+                        <div className="keyword">Street</div>
+                        <div className="keyword">Portrait</div>
+                        <div className="keyword">Street</div>
+                    </div>
+                    {serverMessage && <p style={{ color: serverMessage.includes('Error') ? 'red' : 'green' }}>{serverMessage}</p>}
+                    <br />
+                    <input type="submit" value="Publish" className="edits" />
+                </div>
+            </div>
+        </form>
+    </div>
+  );
+};
+
+export default Uploadimage;
